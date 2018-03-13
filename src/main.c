@@ -6,16 +6,22 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 10:56:10 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/13 16:31:26 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/13 18:31:44 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-t_alloc *g_alloc = NULL;
+t_alloc g_alloc = {NULL, NULL, NULL};
 
 int main(void)
 {
+	char *str;
+
+	if(!(str = (char*)mymalloc(sizeof(char) * 6)))
+		printf("Probleme allocation\n");
+	str = "hello";
+	printf("%s\n", str);
 	printf("page size = %d\n", getpagesize());
 	return (0);
 }
@@ -24,138 +30,140 @@ void	*mymalloc(size_t size)
 {
 	if (!size)
 		return (NULL);
-	if (g_alloc == NULL)
-		if (!init_zone())
+	if (!g_alloc.tiny)
+		if (!init_alloc())
 			return (NULL);
+	printf("zone 1 = %p\n", T_HEAD);
+	printf("zone 2 = %p\n", S_HEAD);
 	if (size <= T_MSIZE)
-		return(ts_malloc(T_HEAD, size));
+		return(ts_malloc(T_HEAD, TINY, size));
 	else if (size <= S_MSIZE)
-		return(ts_malloc(S_HEAD, size));
+		return(ts_malloc(S_HEAD, SMALL, size));
 	else
 		return (NULL);
 		//return (l_malloc(g_alloc->large));
 }
 
-void	*ts_malloc(t_zone *zone, size_t size)
+void	*ts_malloc(t_zone *zone, unsigned int type, size_t size)
 {
-	t_zone *cur_zone;
-	t_block *block;
+	t_zone *add;
 
-	cur_zone = zone;
-/*	if (zone->size + total > zone->max)
-	{
-		expand_zone(zone);
-		cur_zone = cur_zone->next;
-	}*/
-	block = search_block(zone);
-	if (block)
-		return (block);
-	else
-	{
-		cur_zone = expand_zone(zone);
-
-
-	}
-
+	ft_putendl("ts_malloc");
+	printf("zone = %p\n", zone);
+	if ((add = search_zone(zone, size)))
+		return (add);
+	else 
+		return (expand_zone(zone, type, size));
 }
 
-void	*split_block(t_block *block, size_t size)
+void    *expand_zone(t_zone *zone, unsigned int type, size_t size)
 {
-	t_block		*new;
+	t_zone *cur;
+	t_zone *new;
 
-	block->next = new;
+	ft_putendl("expand_zone");
+	new = NULL;
+	cur = zone;
+	while (cur->next)
+		cur = cur->next;
+	if((new =set_zone(type)))
+	{
+		cur->next = new;
+		return (split_zone(new, size));
+	}
+	return (NULL);
+}
+
+void	*split_zone(t_zone *zone, size_t size)
+{
+	t_zone		*new;
+
+	ft_putendl("split_zone");
+	new = zone->next;
 	new->free = 1;
 	new->next = NULL;
-	new->size = block->size - size - sizeof(t_block);
-	block->size = size;
-	block->free = 0;
-	return((void *) block + 1);
+	new->size = zone->size - size - sizeof(t_zone);
+	zone->size = size;
+	zone->free = 0;
+	zone->next = new;
+	return((void *) zone + 1);
 }
 
-
-t_zone		*space_available(t_zone *zone)
-{
-	t_zone *cur_zone;
-
-}
-
-t_block	*search_block(t_zone *zone, size_t size)
+void	*search_zone(t_zone *zone, size_t size)
 {
 	t_zone *cur;
 
+	ft_putendl("search_zone");
 	cur = zone;
 	while(cur)
 	{
-		while(cur->block)
-		{
-			if(cur->block->free && cur->block->size >= size)
-				return (split_block(cur->block, size));
-			cur->block = cur->block->next;
-		}
+		if(cur->free && cur->size >= size)
+			return (split_zone(cur, size));
 		cur = cur->next;
 	}
 	return (NULL);
 }
 
-t_zone	*expand_zone(t_zone *zone)
+int		init_alloc(void)
 {
-	t_zone *cur;
-	t_zone *new;
-
-	new = NULL;
-	cur = zone;
-	while (cur->next)
-		cur = cur->next;
-	init_bloc_zone(new, zone->max);
-	cur->next = new;
-	return (new);
-}
-
-int		init_zone(void)
-{
-	set_zones_size();
+	ft_putendl("init_alloc");
+	T_HEAD = set_zone(TINY);
+	S_HEAD = set_zone(SMALL);
 	L_HEAD = NULL;
-	return (init_bloc_zone(T_ZONE, T_MAX) && init_bloc_zone(S_ZONE, S_MAX));
+	ft_putendl("init_alloc");
+	return(T_HEAD && S_HEAD);
 }
 
-void set_zones_size(void)
+void	*set_zone(unsigned int type)
+{
+	t_zone *zone;
+	size_t size;
+
+	ft_putendl("set_zone");
+	size = set_zone_size(type);
+	if((zone = mmap_call(size)) != NULL)
+	{
+		zone->size = size - sizeof(t_zone);
+		zone->free = 1;
+		zone->next = NULL;
+		return ((void*)zone);
+	}
+	return (NULL);
+}
+
+size_t		set_zone_size(unsigned int type)
 {
 	int				page_size;
 	unsigned int	q;
 	unsigned int	r;
+	size_t			size;
 
+	ft_putendl("set_zone_size");
 	page_size = getpagesize();
-	q = T_RSIZE / page_size;
-	r = (T_RSIZE % page_size) ? 1 : 0;
-	T_MAX = (q + r) * page_size;
-	while (T_MAX / T_MSIZE < 100)
-		T_MAX += page_size;
-	q = S_RSIZE / page_size;
-	r = (S_RSIZE % page_size) ? 1 : 0;
-	S_MAX = (q + r) * page_size;
-	while (S_MAX / S_MSIZE < 100)
-		S_MAX += page_size;
-}
-
-int		init_bloc_zone(t_zone *zone, size_t max)
-{
-	zone->size = 0;
-	zone->next = NULL;
-	zone->max = max;
-	if((zone->block = mmap_call(max)) != NULL)
+	if (type == TINY)
 	{
-		zone->block->size = max - sizeof(t_block);
-		zone->block->free = 1;
-		zone->block->next = NULL;
-		return (1);
+		q = T_RSIZE / page_size;
+		r = (T_RSIZE % page_size) ? 1 : 0;
+		size = (q + r) * page_size;
+		while (size / T_MSIZE < 100)
+			size += page_size;
 	}
-	return (0);
+	else
+	{
+		q = S_RSIZE / page_size;
+		r = (S_RSIZE % page_size) ? 1 : 0;
+		size = (q + r) * page_size;
+		while (size / S_MSIZE < 100)
+			size += page_size;
+	}
+		return(size);
 }
 
 void	*mmap_call(size_t	size)
 {
 	void *add;
 
+	ft_putendl("map");
 	if((add = mmap(0, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == ((void *) -1))
 			return (NULL);
 	return(add);
