@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 10:56:10 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/12 21:03:50 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/13 16:31:26 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ t_alloc *g_alloc = NULL;
 int main(void)
 {
 	printf("page size = %d\n", getpagesize());
-
 	return (0);
 }
 
@@ -29,32 +28,87 @@ void	*mymalloc(size_t size)
 		if (!init_zone())
 			return (NULL);
 	if (size <= T_MSIZE)
-		return(ts_malloc(T_HEAD, T_MAX, size));
+		return(ts_malloc(T_HEAD, size));
 	else if (size <= S_MSIZE)
-		return(ts_malloc(S_HEAD, S_MAX, size));
+		return(ts_malloc(S_HEAD, size));
 	else
-		return (l_malloc(g_alloc->large));
+		return (NULL);
+		//return (l_malloc(g_alloc->large));
 }
 
-void	*ts_malloc(t_zone *zone, size_t max, size_t size)
+void	*ts_malloc(t_zone *zone, size_t size)
 {
-	t_size total;
+	t_zone *cur_zone;
+	t_block *block;
 
-	total = size + sizeof(t_block);
-	if (zone->size + total > max)
-		expand_zone(zone, max);
+	cur_zone = zone;
+/*	if (zone->size + total > zone->max)
+	{
+		expand_zone(zone);
+		cur_zone = cur_zone->next;
+	}*/
+	block = search_block(zone);
+	if (block)
+		return (block);
+	else
+	{
+		cur_zone = expand_zone(zone);
+
+
+	}
+
 }
 
-void	expand_zone(t_zone *zone)
+void	*split_block(t_block *block, size_t size)
+{
+	t_block		*new;
+
+	block->next = new;
+	new->free = 1;
+	new->next = NULL;
+	new->size = block->size - size - sizeof(t_block);
+	block->size = size;
+	block->free = 0;
+	return((void *) block + 1);
+}
+
+
+t_zone		*space_available(t_zone *zone)
+{
+	t_zone *cur_zone;
+
+}
+
+t_block	*search_block(t_zone *zone, size_t size)
+{
+	t_zone *cur;
+
+	cur = zone;
+	while(cur)
+	{
+		while(cur->block)
+		{
+			if(cur->block->free && cur->block->size >= size)
+				return (split_block(cur->block, size));
+			cur->block = cur->block->next;
+		}
+		cur = cur->next;
+	}
+	return (NULL);
+}
+
+t_zone	*expand_zone(t_zone *zone)
 {
 	t_zone *cur;
 	t_zone *new;
 
-	curr = zone;
-	while (curr->next)
-		curr = curr->next;
-	init_bloc_zone(new);
-	curr->next = new;
+	new = NULL;
+	cur = zone;
+	while (cur->next)
+		cur = cur->next;
+	init_bloc_zone(new, zone->max);
+	cur->next = new;
+	return (new);
 }
 
 int		init_zone(void)
@@ -71,12 +125,12 @@ void set_zones_size(void)
 	unsigned int	r;
 
 	page_size = getpagesize();
-	q = (T_RSIZE / page_size) ? T_RSIZE / page_size : 0;
+	q = T_RSIZE / page_size;
 	r = (T_RSIZE % page_size) ? 1 : 0;
 	T_MAX = (q + r) * page_size;
 	while (T_MAX / T_MSIZE < 100)
 		T_MAX += page_size;
-	q = (S_RSIZE / page_size) ? S_RSIZE / page_size : 0;
+	q = S_RSIZE / page_size;
 	r = (S_RSIZE % page_size) ? 1 : 0;
 	S_MAX = (q + r) * page_size;
 	while (S_MAX / S_MSIZE < 100)
@@ -86,13 +140,19 @@ void set_zones_size(void)
 int		init_bloc_zone(t_zone *zone, size_t max)
 {
 	zone->size = 0;
-	zone-next = NULL;
+	zone->next = NULL;
+	zone->max = max;
 	if((zone->block = mmap_call(max)) != NULL)
+	{
+		zone->block->size = max - sizeof(t_block);
+		zone->block->free = 1;
+		zone->block->next = NULL;
 		return (1);
+	}
 	return (0);
 }
 
-void	*mmap_call(t_size	size)
+void	*mmap_call(size_t	size)
 {
 	void *add;
 
