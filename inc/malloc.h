@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 14:40:58 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/14 18:00:01 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/15 17:46:44 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # define S_MSIZE 15360
 # define TINY 1
 # define SMALL 2
+# define LARGE 3
 # define T_HEAD g_alloc.tiny
 # define S_HEAD g_alloc.small
 # define L_HEAD g_alloc.large
@@ -33,8 +34,9 @@ typedef struct	s_zone
 {
 	size_t		size;
 	int			free;
-	int			num;
+	unsigned int	num;
 	struct s_zone *next;
+	struct s_zone *prev;
 }				t_zone;
 
 typedef struct s_alloc
@@ -45,12 +47,16 @@ typedef struct s_alloc
 }				t_alloc;
 
 void	*mymalloc(size_t size);
+void	myfree(void *ptr);
 void	*ts_malloc(t_zone *zone, unsigned int type, size_t size);
+void	*l_malloc(t_zone *zone, unsigned int type, size_t size);
 void    *expand_zone(t_zone *zone, unsigned int type, size_t size);
-void	*search_zone(t_zone *zone, size_t size);
-void	*split_zone(t_zone *zone, size_t size);
+void	*search_zone(t_zone *zone, unsigned int type, size_t size);
+void	*split_zone(t_zone *zone, unsigned int type, size_t size);
 int		init_alloc(void);
-void		*set_zone(unsigned int type);
+void	*set_zone(unsigned int type, unsigned int num);
+void	*create_lzone(t_zone *zone, size_t size);
 size_t		set_zone_size(unsigned int type);
 void	*mmap_call(size_t	size);
+void	free_defrag(t_zone *zone);
 #endif
