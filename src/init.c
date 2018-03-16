@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/15 19:55:42 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 14:20:20 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 16:42:48 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	*set_zone(unsigned int type)
 		fprintf(file, "zone = %p\n", (void*)(zone));
 		zone->next = NULL;
 		zone->prev = NULL;
-		zone->head = (void*)(zone + 1);
+		zone->head = (void*)(zone + 1);//verif zize t zone and t block
 		zone->head->size = size - sizeof(t_zone) - sizeof(t_block);
 		zone->head->free = 1;
 		zone->head->next = NULL;

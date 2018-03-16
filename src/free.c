@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 09:58:07 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 13:58:03 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 17:10:50 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,24 @@ void	myfree(void *ptr)
 
 	if(!ptr)
 		return ;
-	fprintf(file, "freeing %p\n", ptr);
+	fprintf(file, "\n\n!!!!!!!!!!!! FREE !!!!!!!!!!!\n\nfreeing ptr %p\n", ptr);
 	block = (t_block*)ptr - 1;
+	fprintf(file, "so freeing block %p\n", block);
+	fprintf(file, "freeing block size %lu\n", block->size);
 	if ((zone = is_in_zone(T_HEAD, block)))
 	{
+		block->free = 1;
 		if((block->prev && block->prev->free) || (block->next && block->next->free))
 			free_defrag(zone, block);
 	}
 	else if ((zone = is_in_zone(S_HEAD, block)))
 	{
+		block->free = 1;
 		if((block->prev && block->prev->free) || (block->next && block->next->free))
 			free_defrag(zone, block);
 	}
 	else if (search_block(L_HEAD, block))
-		munmap_block(block);
+		munmap_block(block);//set to free if can't unmap
 }
 
 void	free_defrag(t_zone *zone, t_block *block)
@@ -40,6 +44,10 @@ void	free_defrag(t_zone *zone, t_block *block)
 	t_block *prev;
 	t_block *next;
 
+	fprintf(file, "\n\n\n------defrag-------\n\n");
+	fprintf(file, "block defraged = %p\n", block);
+	fprintf(file, "block next defraged = %p\n", block->next);
+	fprintf(file, "block prev defraged = %p\n", block->prev);
 	prev = block->prev;
 	next = block->next;
 	if (prev && prev->free)
@@ -49,6 +57,10 @@ void	free_defrag(t_zone *zone, t_block *block)
 		next->prev = prev;
 		//*(&block) = NULL;
 		block = prev;
+		fprintf(file, "\nfrag prev. bloc new add = %p\n", block);
+		fprintf(file, "bloc new size = %lu\n", block->size);
+		fprintf(file, "block next defraged = %p\n", block->next);
+		fprintf(file, "block prev defraged = %p\n", block->prev);
 	}
 	next = block->next;
 	if (next && next->free)
@@ -58,6 +70,10 @@ void	free_defrag(t_zone *zone, t_block *block)
 		if (next->next)
 			next->next->prev = block;
 		//*(&next) = NULL;
+		fprintf(file, "\nfrag next. bloc new add (same = normal) = %p\n", block);
+		fprintf(file, "frag next. bloc new size = %lu\n", block->size);
+		fprintf(file, "block next defraged = %p\n", block->next);
+		fprintf(file, "block prev defraged = %p\n", block->prev);
 	}
 	if (!block->next)
 		zone->tail = block;

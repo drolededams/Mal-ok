@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/15 19:53:00 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 15:04:46 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 18:55:50 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,9 @@ void	*split_block(t_zone *zone, t_block *block, unsigned int type, size_t size)
 	}
 	block->free = 0;
 	if (block->next)
+	{
 		fprintf(file, "remaining size = %lu o\n\n", block->next->size);
+	}
 	else
 		fprintf(file, "remaining size = 0 o\n\n");
 	return((void*)(block + 1));

@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 10:56:10 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 15:04:48 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 16:59:24 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@ int main(void)
 	char *str;
 	char *str2;
 	char *str3;
+	char *to_free_1;
+	char *to_free_2;
+	char *to_free_3;
 	int i;
 	size_t a;
 	size_t b;
@@ -36,13 +39,24 @@ int main(void)
 	fprintf (file, "t_block size = %lu\n\n", sizeof(t_block));
 
 	/*TINY ZONE*/
-	while (i < 1927)
+	while (i < 1926)
 	{
 		if(!(str = (char*)mymalloc(sizeof(char) * 512)))
 			fprintf(file, "Probleme allocation\n");
 		fprintf(file, "str 1 = %p\n\n############\n\n", str);
 		i++;
 	}
+	if(!(to_free_1 = (char*)mymalloc(sizeof(char) * 256)))
+		fprintf(file, "Probleme allocation\n");
+	fprintf(file, "to_free_1 = %p\n\n############\n\n", to_free_1);
+
+	if(!(to_free_2 = (char*)mymalloc(sizeof(char) * 112)))
+		fprintf(file, "Probleme allocation\n");
+	fprintf(file, "to_free_2 = %p\n\n############\n\n", to_free_2);
+
+	if(!(to_free_3 = (char*)mymalloc(sizeof(char) * 80)))
+		fprintf(file, "Probleme allocation\n");
+	fprintf(file, "to_free_3 = %p\n\n############\n\n", to_free_3);
 
 	fprintf(file,"LAST TINY in zone ??\n\n");
 	if(!(str = (char*)mymalloc(sizeof(char) * 214)))
@@ -69,14 +83,12 @@ int main(void)
 	a = (size_t)(str2);
 	str2[0] = '2';
 	str2[1] = '\0';
-	ft_putendl(str2);
 	if(!(str3 = (char*)mymalloc(sizeof(char) * 83)))
 		fprintf(file, "Probleme allocation\n");
+	fprintf(file, "str 3 = %p\n\n############\n\n", str3);
 	b = (size_t)(str3);
 	c = (size_t)(str3 + 81);
-	ft_putendl(str2);
 	str3[81] = '3';
-	ft_putendl(str2);
 	fprintf(file, "str 3 = %p\n", str3);
 	fprintf(file, "str 3 = %lu\n", (size_t)str3);
 	fprintf(file, "str 3 = %p\n", str3 + 81);
@@ -87,5 +99,24 @@ int main(void)
 	fprintf(file, "a - c = %lu\n", a - c);
 	fprintf(file, "b - a = %lu\n", b - a);
 	fprintf(file, "c - a = %lu\n", c - a);
+
+	//test free and remalloc on space
+	fprintf(file, "\n\n\n-oooooooOOOOOOOOooooooo-\n\nTest FREE AND REMALLOC ON SPACE\n\n\n");
+	fprintf(file, "to_free_1 = %p\n\n############\n\n", to_free_1);
+	myfree(to_free_1);
+	myfree(to_free_3);
+	myfree(to_free_2);
+	if(!(str3 = (char*)mymalloc(sizeof(char) * 16)))
+		fprintf(file, "Probleme allocation\n");
+	fprintf(file, "str 3 = %p\n\n############\n\n", str3);
+	if(!(str3 = (char*)mymalloc(sizeof(char) * 224)))
+		fprintf(file, "Probleme allocation\n");
+	fprintf(file, "str 3 = %p\n\n############\n\n", str3);
+	if(!(str3 = (char*)mymalloc(sizeof(char) * 224)))
+		fprintf(file, "Probleme allocation\n");
+	fprintf(file, "str 3 = %p\n\n############\n\n", str3);
+	if(!(str3 = (char*)mymalloc(sizeof(char) * 224)))
+		fprintf(file, "Probleme allocation\n");
+	fprintf(file, "str 3 = %p\n\n############\n\n", str3);
 	return (0);
 }
