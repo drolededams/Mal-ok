@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/15 19:53:00 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 13:37:11 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 15:04:46 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ void	*search_free_block(t_zone *zone, unsigned int type, size_t size)
 			b_cur = b_cur->next;
 		}
 		z_cur = z_cur->next;
+		if (z_cur)
+			b_cur = z_cur->head;
 	}
 	return (NULL);
 }
@@ -86,6 +88,10 @@ void	*split_block(t_zone *zone, t_block *block, unsigned int type, size_t size)
 		block->size = size;
 	}
 	block->free = 0;
+	if (block->next)
+		fprintf(file, "remaining size = %lu o\n\n", block->next->size);
+	else
+		fprintf(file, "remaining size = 0 o\n\n");
 	return((void*)(block + 1));
 }
 
@@ -99,6 +105,7 @@ void	*expand_zone(t_zone *zone, unsigned int type, size_t size)
 	cur = zone;
 	while (cur->next)
 		cur = cur->next;
+	fprintf(file, "last zone before exp = %p\n", (void*)(cur));
 	if((new = set_zone(type)))
 	{
 		cur->next = new;

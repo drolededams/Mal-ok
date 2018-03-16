@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 09:58:07 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 13:46:59 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 13:58:03 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ void	munmap_zone(t_zone *zone)
 	t_zone *prev;
 	t_zone *next;
 
+	fprintf(file, "\n---------\n\nunmapping zone = %p\n\n", zone);
 	prev = zone->prev;
 	next = zone->next;
 	prev->next = next;
@@ -92,6 +93,7 @@ void	munmap_block(t_block *block)
 	t_block *prev;
 	t_block *next;
 
+	fprintf(file, "\n---------\n\nunmapping block = %p\n\n", block);
 	prev = block->prev;
 	next = block->next;
 	prev->next = next;
