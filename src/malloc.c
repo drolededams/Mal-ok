@@ -6,11 +6,13 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/15 19:44:52 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/15 19:54:13 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 10:05:09 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
+
+t_alloc g_alloc = {NULL, NULL, NULL};
 
 void	*mymalloc(size_t size)
 {
@@ -45,4 +47,13 @@ void	*l_malloc(t_zone *zone, unsigned int type, size_t size)
 		return(add);
 	else
 		return (create_lzone(zone, size));
+}
+
+void	*mmap_call(size_t	size)
+{
+	void *add;
+
+	if((add = mmap(0, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == ((void *) -1))
+			return (NULL);
+	return(add);
 }

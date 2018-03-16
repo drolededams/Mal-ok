@@ -6,11 +6,11 @@
 #    By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/05/12 15:32:27 by dgameiro          #+#    #+#              #
-#    Updated: 2018/03/09 10:55:33 by dgameiro         ###   ########.fr        #
+#    Updated: 2018/03/16 10:22:54 by dgameiro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRC = src/main.c
+SRC = src/main.c src/free.c src/init.c src/malloc.c src/zone.c
 
 INC = -I./inc
 

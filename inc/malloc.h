@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 14:40:58 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/15 17:46:44 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 10:10:55 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,9 @@ typedef struct s_alloc
 	t_zone		*small;
 	t_zone		*large;
 }				t_alloc;
+
+extern t_alloc g_alloc;
+extern FILE *file;
 
 void	*mymalloc(size_t size);
 void	myfree(void *ptr);

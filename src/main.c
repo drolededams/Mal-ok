@@ -6,13 +6,14 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 10:56:10 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/15 20:00:09 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 10:33:48 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "malloc.h"
 
-t_alloc g_alloc = {NULL, NULL, NULL};
+t_alloc g_alloc;
 FILE *file;
 
 int main(void)
@@ -27,6 +28,9 @@ int main(void)
 	size_t c;
 
 	file = fopen("test", "w+");
+	g_alloc.tiny = NULL;
+	g_alloc.small = NULL;
+	g_alloc.large = NULL;
 	i = 0;
 	fprintf (file, "t_zone size = %lu\n\n", sizeof(t_zone));
 	while (i < 4095)
@@ -75,69 +79,4 @@ int main(void)
 	fprintf(file, "a - b = %lu\n", a - b);
 	fprintf(file, "a - c = %lu\n", a - c);
 	return (0);
-}
-
-void	myfree(void *ptr)
-{
-	t_zone *zone;
-	if(!ptr)
-		return ;
-	fprintf(file, "freeing %p\n", ptr);
-	zone = (t_zone*)ptr - 1;
-	zone->free = 1;
-	if((zone->prev && zone->prev->free) || (zone->next && zone->next->free))
-		free_defrag(zone);
-}
-
-void	free_defrag(t_zone *zone)
-{
-	t_zone *prev;
-	t_zone *next;
-
-	prev = zone->prev;
-	next = zone->next;
-	if (prev && prev->free)
-	{
-		prev->size += zone->size + sizeof(t_zone);
-		prev->next = next;
-		next->prev = prev;
-		zone = prev;
-	}
-	next = zone->next;
-	if (next && next->free)
-	{
-		zone->size += next->size + sizeof(t_zone);
-		zone->next = next->next;
-		if (next->next)
-			next->next->prev = zone;
-	}
-}
-
-void	*expand_zone(t_zone *zone, unsigned int type, size_t size)
-{
-	t_zone *cur;
-	t_zone *new;
-
-	fprintf(file, "expand_zone\n");
-	new = NULL;
-	cur = zone;
-	while (cur->next)
-		cur = cur->next;
-	if((new = set_zone(type, zone->num + 1)))
-	{
-		cur->next = new;
-		new->prev = cur;
-		return (split_zone(new, type, size));
-	}
-	return (NULL);
-}
-
-
-void	*mmap_call(size_t	size)
-{
-	void *add;
-
-	if((add = mmap(0, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == ((void *) -1))
-			return (NULL);
-	return(add);
 }
