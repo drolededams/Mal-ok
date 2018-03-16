@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:11:47 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 18:55:48 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 19:44:56 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,9 @@ void	*t_realloc(void *ptr, size_t size, t_zone *zone, t_block *block)
 	if (size <= block->size)
 		return (split_block(zone, block, TINY, size));
 	if (size <= T_MSIZE)
-	{
-		if (block->next && block->next->free)
-			suitable_block(block, size);
-	}
-	return (move_free_ptr(ptr, block->size, size));
+		if (block->next && block->next->free && enough_space(block, size))
+			return (fusion_block(zone, TINY, block, size));
+	return (move_and_free(ptr, block->size, size));
 }
 
 void	*s_realloc(void *ptr, size_t size, t_zone *zone, t_block *block)
@@ -52,10 +50,31 @@ void	*s_realloc(void *ptr, size_t size, t_zone *zone, t_block *block)
 	{
 		if (size <= block->size)
 			return (split_block(zone, block, SMALL, size));
-		else if (block->next && block->next->free)
-			suitable_block(block, size);
+		else if (block->next && block->next->free && enough_space(block, size))
+			return (fusion_block(zone, SMALL, block, size));
 	}
-	return (move_free_ptr(ptr, block->size, size));
+	return (move_and_free(ptr, block->size, size));
+}
+
+int		enough_space(t_block *block, size_t size)
+{
+	if (block->size + block->next->size + sizeof(t_block) >= size)
+		return (1);
+	return (0);
+}
+
+void	*fusion_block(t_zone *zone, int type, t_block *block, size_t size)
+{
+	t_block *fus;
+
+	fus = block->next;
+	block->size += fus->size + sizeof(t_block);
+	block->next = fus->next;
+	if (fus->next)
+		fus->next->prev = block;
+	else
+		zone->tail = block;
+	return (split_block(zone, block, type, size));
 }
 
 void	*l_realloc(void *ptr, size_t size, t_block *block)
@@ -63,10 +82,10 @@ void	*l_realloc(void *ptr, size_t size, t_block *block)
 	if (size <= block->size)
 		return (ptr);
 	else
-		return (move_free_ptr(ptr, block->size, size));
+		return (move_and_free(ptr, block->size, size));
 }
 
-void	*move_free_ptr(void *ptr, t_size old_size, t_size new_size)
+void	*move_and_free(void *ptr, size_t old_size, size_t new_size)
 {
 	void *new_ptr;
 

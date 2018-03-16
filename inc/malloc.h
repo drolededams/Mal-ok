@@ -1,4 +1,5 @@
 /* ************************************************************************** */
+
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   malloc.h                                           :+:      :+:    :+:   */
@@ -73,4 +74,12 @@ void	munmap_zone(t_zone *zone);
 void	munmap_block(t_block *block);
 t_zone	*is_in_zone(t_zone	*zone, t_block *wanted);
 int		search_block(t_block *head, t_block *wanted);
+void *myrealloc(void *ptr, size_t size);
+void	*t_realloc(void *ptr, size_t size, t_zone *zone, t_block *block);
+void	*s_realloc(void *ptr, size_t size, t_zone *zone, t_block *block);
+void	*l_realloc(void *ptr, size_t size, t_block *block);
+void	*move_and_free(void *ptr, size_t old_size, size_t new_size);
+int		enough_space(t_block *block, size_t size);
+void	*fusion_block(t_zone *zone, int type, t_block *block, size_t size);
+void	*ft_realloc_cpy(void *dst, const void *src, size_t n, size_t m);
 #endif
