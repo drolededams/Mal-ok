@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 14:40:58 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 10:10:55 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 13:40:17 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,36 +30,47 @@
 # include <sys/resource.h>
 # include <sys/mman.h>
 
-typedef struct	s_zone
+typedef struct	s_block
 {
 	size_t		size;
 	int			free;
-	unsigned int	num;
-	struct s_zone *next;
-	struct s_zone *prev;
+	struct s_block *next;
+	struct s_block *prev;
+}				t_block;
+
+typedef struct s_zone
+{
+	t_block		*head;
+	t_block		*tail;
+	struct s_zone		*prev;
+	struct s_zone		*next;
 }				t_zone;
 
 typedef struct s_alloc
 {
 	t_zone		*tiny;
 	t_zone		*small;
-	t_zone		*large;
+	t_block		*large;
 }				t_alloc;
 
 extern t_alloc g_alloc;
 extern FILE *file;
 
-void	*mymalloc(size_t size);
-void	myfree(void *ptr);
-void	*ts_malloc(t_zone *zone, unsigned int type, size_t size);
-void	*l_malloc(t_zone *zone, unsigned int type, size_t size);
-void    *expand_zone(t_zone *zone, unsigned int type, size_t size);
-void	*search_zone(t_zone *zone, unsigned int type, size_t size);
-void	*split_zone(t_zone *zone, unsigned int type, size_t size);
 int		init_alloc(void);
-void	*set_zone(unsigned int type, unsigned int num);
-void	*create_lzone(t_zone *zone, size_t size);
-size_t		set_zone_size(unsigned int type);
+size_t	set_zone_size(unsigned int type);
+void	*set_zone(unsigned int type);
+void	*mymalloc(size_t size);
+void	*ts_malloc(t_zone *zone, unsigned int type, size_t size);
+void	*l_malloc(t_block *block, size_t size);
 void	*mmap_call(size_t	size);
-void	free_defrag(t_zone *zone);
+void	*search_free_block(t_zone *zone, unsigned int type, size_t size);
+void	*create_lblock(t_block *block, size_t size);
+void	*split_block(t_zone *zone, t_block *block, unsigned int type, size_t size);
+void	*expand_zone(t_zone *zone, unsigned int type, size_t size);
+void	myfree(void *ptr);
+void	free_defrag(t_zone *zone, t_block *block);
+void	munmap_zone(t_zone *zone);
+void	munmap_block(t_block *block);
+t_zone	*is_in_zone(t_zone	*zone, t_block *wanted);
+int		search_block(t_block *head, t_block *wanted);
 #endif

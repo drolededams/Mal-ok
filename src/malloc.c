@@ -6,13 +6,11 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/15 19:44:52 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 10:05:09 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 13:36:25 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
-
-t_alloc g_alloc = {NULL, NULL, NULL};
 
 void	*mymalloc(size_t size)
 {
@@ -26,27 +24,22 @@ void	*mymalloc(size_t size)
 	else if (size <= S_MSIZE)
 		return(ts_malloc(S_HEAD, SMALL, size));
 	else
-		return (l_malloc(T_HEAD, LARGE, size));
+		return (l_malloc(L_HEAD, size));
 }
 
 void	*ts_malloc(t_zone *zone, unsigned int type, size_t size)
 {
-	t_zone *add;
+	t_block *add;
 
-	if ((add = search_zone(zone, type, size)))
+	if ((add = search_free_block(zone, type, size)))
 		return (add);
 	else 
 		return (expand_zone(zone, type, size));
 }
 
-void	*l_malloc(t_zone *zone, unsigned int type, size_t size)
+void	*l_malloc(t_block *block, size_t size)
 {
-	t_zone *add;
-
-	if((add = search_zone(zone, type, size)))
-		return(add);
-	else
-		return (create_lzone(zone, size));
+	return (create_lblock(block, size));
 }
 
 void	*mmap_call(size_t	size)

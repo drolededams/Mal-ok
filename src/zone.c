@@ -1,52 +1,57 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   zone.c                                             :+:      :+:    :+:   */
+/*   block.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/15 19:53:00 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 10:39:47 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 13:37:11 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-void	*search_zone(t_zone *zone, unsigned int type, size_t size)
+void	*search_free_block(t_zone *zone, unsigned int type, size_t size)
 {
-	t_zone *cur;
+	t_zone *z_cur;
+	t_block *b_cur;
 
-	cur = zone;
-	while(cur)
+	z_cur = zone;
+	if (z_cur)
+		b_cur = z_cur->head;
+	while(z_cur)
 	{
-		if(cur->free && cur->size >= size)
-			return (split_zone(cur, type, size));
-		cur = cur->next;
+		while (b_cur)
+		{
+			if(b_cur->free && b_cur->size >= size)
+				return (split_block(z_cur, b_cur, type, size));
+			b_cur = b_cur->next;
+		}
+		z_cur = z_cur->next;
 	}
 	return (NULL);
 }
 
-void	*create_lzone(t_zone *zone, size_t size)
+void	*create_lblock(t_block *block, size_t size)
 {
-	t_zone *cur;
-	t_zone *new;
+	t_block *cur;
+	t_block *new;
 
-	cur = zone;
-	size = (((size + sizeof(t_zone)) / getpagesize()) + 1) * getpagesize;
+	cur = block;
+	size = (((size + sizeof(t_block)) / getpagesize()) + 1) * getpagesize();
 	if((new = mmap_call(size)) != NULL)
 	{
-		new->size = size - sizeof(t_zone);
+		new->size = size - sizeof(t_block);
 		new->free = 0;
 		new->next = NULL;
 		new->prev = NULL;
-		new->num = 0;
 		if (cur)
 		{
 			while (cur->next)
 				cur = cur->next;
 			cur->next = new;
 			new->prev = cur;
-			new->num = cur->num + 1;
 		}
 		else
 			cur = new;
@@ -55,9 +60,9 @@ void	*create_lzone(t_zone *zone, size_t size)
 	return (NULL);
 }
 
-void	*split_zone(t_zone *zone, unsigned int type, size_t size)
+void	*split_block(t_zone *zone, t_block *block, unsigned int type, size_t size)
 {
-	t_zone		*new;
+	t_block		*new;
 	size_t		resolution;
 //get reso
 	if (type == TINY)
@@ -66,21 +71,22 @@ void	*split_zone(t_zone *zone, unsigned int type, size_t size)
 		resolution = T_MSIZE;
 	else
 		resolution = S_MSIZE;
-	if (zone->size > size + sizeof(t_zone) + resolution)
+	if (block->size > size + sizeof(t_block) + resolution)
 	{
-		new = (void*)zone + sizeof(t_zone) + size;
+		new = (void*)block + sizeof(t_block) + size;
 		new->free = 1;
-		new->num = zone->num;
-		new->next = zone->next;
-		if(new->next)
+		new->next = block->next;
+		if (new->next)
 			new->next->prev = new;
-		new->size = zone->size - size - sizeof(t_zone);
-		zone->next = new;
-		new->prev = zone;
-		zone->size = size;
+		else if (zone)
+			zone->tail = new;
+		new->size = block->size - size - sizeof(t_block);
+		block->next = new;
+		new->prev = block;
+		block->size = size;
 	}
-	zone->free = 0;
-	return((void*)(zone + 1));
+	block->free = 0;
+	return((void*)(block + 1));
 }
 
 void	*expand_zone(t_zone *zone, unsigned int type, size_t size)
@@ -93,11 +99,11 @@ void	*expand_zone(t_zone *zone, unsigned int type, size_t size)
 	cur = zone;
 	while (cur->next)
 		cur = cur->next;
-	if((new = set_zone(type, zone->num + 1)))
+	if((new = set_zone(type)))
 	{
 		cur->next = new;
 		new->prev = cur;
-		return (split_zone(new, type, size));
+		return (split_block(new, new->head, type, size));
 	}
 	return (NULL);
 }

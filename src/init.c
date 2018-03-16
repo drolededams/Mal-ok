@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/15 19:55:42 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/15 19:58:40 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/16 13:33:45 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 int		init_alloc(void)
 {
-	T_HEAD = set_zone(TINY, 0);
+	T_HEAD = set_zone(TINY);
 	fprintf(file, "tiny + 1 zone = %p\n", (void*)(T_HEAD + 1));
-	S_HEAD = set_zone(SMALL, 0);
+	S_HEAD = set_zone(SMALL);
 	fprintf(file, "small + 1 zone = %p\n", (void*)(S_HEAD + 1));
 	L_HEAD = NULL;
 	return(T_HEAD && S_HEAD);
@@ -35,7 +35,7 @@ size_t		set_zone_size(unsigned int type)
 		q = T_RSIZE / page_size;
 		r = (T_RSIZE % page_size) ? 1 : 0;
 		size = (q + r) * page_size;
-		while (size / (T_MSIZE + sizeof(t_zone)) < 100)
+		while ((size - sizeof(t_zone)) / (T_MSIZE + sizeof(t_block)) < 100)
 			size += page_size;
 	}
 	else
@@ -43,13 +43,13 @@ size_t		set_zone_size(unsigned int type)
 		q = S_RSIZE / page_size;
 		r = (S_RSIZE % page_size) ? 1 : 0;
 		size = (q + r) * page_size;
-		while (size / (S_MSIZE + sizeof(t_zone)) < 100)
+		while ((size - sizeof(t_zone)) / (S_MSIZE + sizeof(t_block)) < 100)
 			size += page_size;
 	}
 		return(size);
 }
 
-void	*set_zone(unsigned int type, unsigned int num)
+void	*set_zone(unsigned int type)
 {
 	t_zone *zone;
 	size_t size;
@@ -57,11 +57,14 @@ void	*set_zone(unsigned int type, unsigned int num)
 	size = set_zone_size(type);
 	if((zone = mmap_call(size)) != NULL)
 	{
-		zone->size = size - sizeof(t_zone);
-		zone->free = 1;
 		zone->next = NULL;
 		zone->prev = NULL;
-		zone->num = num;
+		zone->head = (void*)(zone + 1);
+		zone->head->size = size - sizeof(t_zone) - sizeof(t_block);
+		zone->head->free = 1;
+		zone->head->next = NULL;
+		zone->head->prev = NULL;
+		zone->tail = zone->head;
 		return ((void*)zone);
 	}
 	return (NULL);
