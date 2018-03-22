@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 10:56:10 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 16:59:24 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/22 16:27:05 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ int main(void)
 	size_t b;
 	size_t c;
 
+	//show_alloc_mem();
 	file = fopen("test", "w+");
 	g_alloc.tiny = NULL;
 	g_alloc.small = NULL;
@@ -37,6 +38,35 @@ int main(void)
 
 	fprintf (file, "t_zone size = %lu\n\n", sizeof(t_zone));
 	fprintf (file, "t_block size = %lu\n\n", sizeof(t_block));
+
+	if(!(to_free_1 = (char*)mymalloc(sizeof(char) * 2)))
+		fprintf(file, "Probleme allocation\n");
+	if(!(to_free_2 = (char*)mymalloc(sizeof(char) * 6)))
+		fprintf(file, "Probleme allocation\n");
+	/*if(!(to_free_1 = (char*)mymalloc(sizeof(char) * 256)))
+		fprintf(file, "Probleme allocation\n");
+	if(!(to_free_2 = (char*)mymalloc(sizeof(char) * 612)))
+		fprintf(file, "Probleme allocation\n");
+	if(!(to_free_3 = (char*)mymalloc(sizeof(char) * 455480)))
+		fprintf(file, "Probleme allocation\n");
+*/
+	show_alloc_mem_hex();
+	//show_alloc_mem();
+	
+	if(!(to_free_3 = (char*)mymalloc(sizeof(char) * 54455480)))
+		fprintf(file, "Probleme allocation\n");
+	if(!(to_free_3 = (char*)mymalloc(sizeof(char) * 455480)))
+		fprintf(file, "Probleme allocation\n");
+	if(!(to_free_3 = (char*)mymalloc(sizeof(char) * 455480)))
+		fprintf(file, "Probleme allocation\n");
+
+	//show_alloc_mem();
+	myfree(to_free_3);
+	//show_alloc_mem();
+
+	if(!(to_free_3 = (char*)mymalloc(sizeof(char) * 455480)))
+		fprintf(file, "Probleme allocation\n");
+	//show_alloc_mem();
 
 	/*TINY ZONE*/
 	while (i < 1926)
@@ -118,5 +148,6 @@ int main(void)
 	if(!(str3 = (char*)mymalloc(sizeof(char) * 224)))
 		fprintf(file, "Probleme allocation\n");
 	fprintf(file, "str 3 = %p\n\n############\n\n", str3);
+	//show_alloc_mem();
 	return (0);
 }

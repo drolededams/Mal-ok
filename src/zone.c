@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/15 19:53:00 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 19:44:59 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/22 14:14:28 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ void	*create_lblock(t_block *block, size_t size)
 			new->prev = cur;
 		}
 		else
-			cur = new;
-		return ((void*)new + 1);
+			L_HEAD = new;
+		return ((void*)(new + 1));
 	}
 	return (NULL);
 }
