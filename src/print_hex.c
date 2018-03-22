@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/22 14:30:30 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/22 16:57:03 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/22 19:23:28 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,62 +20,92 @@ void	show_alloc_mem_hex(void)
 	void *min;
 	int *cur;
 	unsigned long long line;
+	unsigned char *s_cur;
+	unsigned char *s_pre;
 
 	tiny = T_HEAD;
 	small = S_HEAD;
 	large = L_HEAD;
 	min = min_add(tiny, small, large);
 	line = 0;
-	if (!(cur = (int*)mymalloc(sizeof(int) * 1)))//init avec zero
+	if (!(cur = (int*)mymalloc(sizeof(int) * 2)))//init avec zero
+		ft_putendl("malloc error");
+	if (!(s_cur = (unsigned char*)mymalloc(sizeof(char) * 17)))//init avec zero
+		ft_putendl("malloc error");
+	if (!(s_pre = (unsigned char*)mymalloc(sizeof(char) * 17)))//init avec zero
 		ft_putendl("malloc error");
 	cur[0] = 0;
+	cur[1] = 0;
+	s_pre[2] = 'u';
+	s_cur[16] = '\0';
 	while (min)
 	{
-		ft_putstr("0000000000000000 ");
 		if (min == tiny)
 		{
-			line = ts_print_hex(tiny, cur, line);
+			line = ts_print_hex(tiny, cur, line, s_pre, s_cur);
 			tiny = tiny->next;
 		}
 		else if (min == small)
 		{
-			line = ts_print_hex(small, cur, line);
+			line = ts_print_hex(small, cur, line, s_pre, s_cur);
 			small = small->next;
 		}
 		else if (min == large)
 		{
-			line = l_print_hex(large, cur, line);
+			line = l_print_hex(large, cur, line, s_pre, s_cur);
 			large = large->next;
 		}
 		min = min_add(tiny, small, large);
 	}
 	myfree(cur);
+	myfree(s_pre);
+	myfree(s_cur);
 }
 
-unsigned long long ts_print_hex(t_zone *zone, int *cur, unsigned long long line)
+unsigned long long ts_print_hex(t_zone *zone, int *cur, unsigned long long line, unsigned char *s_pre, unsigned char *s_cur)
 {
 	t_block *block;
 	void *ptr;
 	size_t i;
+	size_t j;
 
 	block = zone->head;
-	while(block && line < 49)
+	while(block)
 	{
 		ptr = (void*)(block + 1);
 		i = 0;
-		while(i < 10)
+		while(i < block->size)
 		{
-			print_char_hex(((char*)ptr)[i]);
+			s_cur[cur[0]] = ((unsigned char*)ptr)[i];
 			cur[0]++;
 			if (cur[0] == 16)
 			{
-				cur[0] = 0;
-				ft_putchar('\n');
+				if (same_str(s_pre, s_cur))
+				{
+					if(!cur[1])
+					{
+						ft_putendl("*");
+						cur[1] = 1;
+					}
+				}
+				else
+				{
+					print_line_hex(line);
+					cur[1] = 0;
+					j = 0;
+					while(j < 15)
+					{
+						print_char_hex(s_cur[j]);
+						ft_putchar(' ');
+						j++;
+					}
+					print_char_hex(s_cur[j]);
+					ft_putchar('\n');
+				}
 				line += 16;;
-				print_line_hex(line);
+				str_cpy(s_pre, s_cur);
+				cur[0] = 0;
 			}
-			else
-				ft_putchar(' ');
 			i++;
 		}
 		block = block->next;
@@ -83,16 +113,43 @@ unsigned long long ts_print_hex(t_zone *zone, int *cur, unsigned long long line)
 	return (line);
 }
 
-unsigned long long l_print_hex(t_block *block, int *cur, unsigned long long line)
+int		same_str(unsigned char *pre, unsigned char *cur)
+{
+	int i;
+
+	i = 0;
+	while (i < 16)
+	{
+		if (pre[i] != cur[i])
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void str_cpy(unsigned char *pre, unsigned char *cur)
+{
+	int i;
+
+	i = 0;
+	while (i < 16)
+	{
+		pre[i] = cur[i];
+		i++;
+	}
+}
+
+unsigned long long l_print_hex(t_block *block, int *cur, unsigned long long line, unsigned char *s_pre, unsigned char *s_cur)
 {
 	void *ptr;
 	size_t i;
 
 	ptr = (void*)(block + 1);
 	i = 0;
+	s_pre = s_cur;
 	while(i < block->size)
 	{
-		print_char_hex(((char*)ptr)[i]);
+		print_char_hex(((unsigned char*)ptr)[i]);
 		cur[0]++;
 		if (cur[0] == 16)
 		{
@@ -146,9 +203,9 @@ char *char_to_str(unsigned long long c, char *hex)
 	}
 	while (c)
 	{
-		i--;
 		r = c % 16;
-		str[i] = hex[r];
+		str[i + j - 1] = hex[r];
+		i--;
 		c /= 16;
 	}
 	return (str);
@@ -161,28 +218,22 @@ char *line_to_str(unsigned long long line, char *hex)
 	int j;
 	int r;
 
-	printf("line = %llu\n", line);
 	i = add_len(line);
-	printf("i = %d\n", i);
 	j = 0;
 	if(!(str = (char*)mymalloc(sizeof(char) * 17)))
 		fprintf(file, "Probleme allocation\n");
 	str[16] = '\0';
-	printf("str line = %s\n", str);
 	while (j < 16 - i)
 	{
 		str[j] = '0';
 		j++;
 	}
-	printf("j = %d\n", j);
-	printf("str line = %s\n", str);
 	while (line)
 	{
-		i--;
 		r = line % 16;
 		str[i + j - 1] = hex[r];
+		i--;
 		line /= 16;
 	}
-	printf("str line = %s\n", str);
 	return (str);
 }

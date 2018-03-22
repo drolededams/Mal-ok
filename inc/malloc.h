@@ -94,10 +94,12 @@ void	ft_putull(unsigned long long n);
 void *min_add(void *tiny, void *small, void *large);
 unsigned long long ull_max(unsigned long long t, unsigned long long s, unsigned long long l);
 void	show_alloc_mem_hex(void);
-unsigned long long ts_print_hex(t_zone *zone, int *cur, unsigned long long line);
-unsigned long long l_print_hex(t_block *block, int *cur, unsigned long long line);
+unsigned long long ts_print_hex(t_zone *zone, int *cur, unsigned long long line, unsigned char *s_pre, unsigned char *s_cur);
+unsigned long long l_print_hex(t_block *block, int *cur, unsigned long long line, unsigned char *s_pre, unsigned char *s_cur);
 void print_line_hex(unsigned long long line);
 void print_char_hex(unsigned long long c);
 char *char_to_str(unsigned long long c, char *hex);
 char *line_to_str(unsigned long long line, char *hex);
+int		same_str(unsigned char *pre, unsigned char *cur);
+void str_cpy(unsigned char *pre, unsigned char *cur);
 #endif

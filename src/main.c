@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 10:56:10 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/22 16:27:05 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/22 19:27:17 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,11 @@ int main(void)
 	fprintf (file, "t_zone size = %lu\n\n", sizeof(t_zone));
 	fprintf (file, "t_block size = %lu\n\n", sizeof(t_block));
 
-	if(!(to_free_1 = (char*)mymalloc(sizeof(char) * 2)))
+	if(!(to_free_1 = (char*)mymalloc(sizeof(char) * 16)))
 		fprintf(file, "Probleme allocation\n");
-	if(!(to_free_2 = (char*)mymalloc(sizeof(char) * 6)))
+	if(!(to_free_2 = (char*)mymalloc(sizeof(char) * 16)))
+		fprintf(file, "Probleme allocation\n");
+	if(!(to_free_3 = (char*)mymalloc(sizeof(char) * 16)))
 		fprintf(file, "Probleme allocation\n");
 	/*if(!(to_free_1 = (char*)mymalloc(sizeof(char) * 256)))
 		fprintf(file, "Probleme allocation\n");
@@ -50,6 +52,24 @@ int main(void)
 	if(!(to_free_3 = (char*)mymalloc(sizeof(char) * 455480)))
 		fprintf(file, "Probleme allocation\n");
 */
+	while (i < 16)
+	{
+		to_free_1[i] = 65 + i;
+		to_free_2[i] = to_free_1[i];
+		to_free_3[i] = to_free_1[i];
+		i++;
+	}
+	i = 0;
+	if(!(to_free_2 = (char*)mymalloc(sizeof(char) * 16)))
+		fprintf(file, "Probleme allocation\n");
+	while (i < 16)
+	{
+		to_free_1[i] = 65 + i;
+		to_free_2[i] = to_free_1[i];
+		to_free_3[i] = to_free_1[i];
+		i++;
+	}
+	i = 0;
 	show_alloc_mem_hex();
 	//show_alloc_mem();
 	
