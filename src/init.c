@@ -6,24 +6,18 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/15 19:55:42 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/16 16:42:48 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/23 11:12:30 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-int		init_alloc(void)
+int			init_alloc(void)
 {
 	T_HEAD = set_zone(TINY);
-	fprintf(file, "tiny zone = %p\n", (void*)(T_HEAD));
-	fprintf(file, "tiny  1st block = %p\n", (void*)(T_HEAD + 1));
-	fprintf(file, "tiny  1st alloc = %p\n\n", (void*)(T_HEAD + 2));
 	S_HEAD = set_zone(SMALL);
-	fprintf(file, "small zone = %p\n", (void*)(S_HEAD));
-	fprintf(file, "small 1st block = %p\n", (void*)(S_HEAD + 1));
-	fprintf(file, "small 1st alloc = %p\n\n", (void*)(S_HEAD + 2));
 	L_HEAD = NULL;
-	return(T_HEAD && S_HEAD);
+	return (T_HEAD && S_HEAD);
 }
 
 size_t		set_zone_size(unsigned int type)
@@ -41,8 +35,6 @@ size_t		set_zone_size(unsigned int type)
 		size = (q + r) * page_size;
 		while ((size - sizeof(t_zone)) / (T_MSIZE + sizeof(t_block)) < 100)
 			size += page_size;
-		fprintf(file, "TINY ZONE SIZE = %lu\n", size);
-		fprintf(file, "TINY MAX MALLOC = %lu\n\n", (size - sizeof(t_zone)) / (T_MSIZE + sizeof(t_block)));
 	}
 	else
 	{
@@ -51,24 +43,21 @@ size_t		set_zone_size(unsigned int type)
 		size = (q + r) * page_size;
 		while ((size - sizeof(t_zone)) / (S_MSIZE + sizeof(t_block)) < 100)
 			size += page_size;
-		fprintf(file, "SMALL ZONE SIZE = %lu\n", size);
-		fprintf(file, "SMALL MAX MALLOC = %lu\n\n", (size - sizeof(t_zone)) / (S_MSIZE + sizeof(t_block)));
 	}
-		return(size);
+	return (size);
 }
 
-void	*set_zone(unsigned int type)
+void		*set_zone(unsigned int type)
 {
 	t_zone *zone;
 	size_t size;
 
 	size = set_zone_size(type);
-	if((zone = mmap_call(size)) != NULL)
+	if ((zone = mmap_call(size)) != NULL)
 	{
-		fprintf(file, "zone = %p\n", (void*)(zone));
 		zone->next = NULL;
 		zone->prev = NULL;
-		zone->head = (void*)(zone + 1);//verif zize t zone and t block
+		zone->head = (void*)(zone + 1);
 		zone->head->size = size - sizeof(t_zone) - sizeof(t_block);
 		zone->head->free = 1;
 		zone->head->next = NULL;

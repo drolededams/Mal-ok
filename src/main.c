@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 10:56:10 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/22 19:27:17 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/23 10:29:21 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int main(void)
 	char *to_free_2;
 	char *to_free_3;
 	int i;
+	int j;
 	size_t a;
 	size_t b;
 	size_t c;
@@ -38,6 +39,7 @@ int main(void)
 
 	fprintf (file, "t_zone size = %lu\n\n", sizeof(t_zone));
 	fprintf (file, "t_block size = %lu\n\n", sizeof(t_block));
+	fprintf (file, "size_t size = %lu\n\n", sizeof(size_t));
 
 	if(!(to_free_1 = (char*)mymalloc(sizeof(char) * 16)))
 		fprintf(file, "Probleme allocation\n");
@@ -70,9 +72,21 @@ int main(void)
 		i++;
 	}
 	i = 0;
+	j = 0;
+	if(!(to_free_2 = (char*)mymalloc(sizeof(char) * 1000000)))
+		fprintf(file, "Probleme allocation\n");
+	while(i < 1000000)
+	{
+		if (j == 16)
+			j = 0;
+		to_free_2[i] = 'A' + j;
+		i++;
+		j++;
+	}
 	show_alloc_mem_hex();
 	//show_alloc_mem();
-	
+	i = 0;
+
 	if(!(to_free_3 = (char*)mymalloc(sizeof(char) * 54455480)))
 		fprintf(file, "Probleme allocation\n");
 	if(!(to_free_3 = (char*)mymalloc(sizeof(char) * 455480)))
