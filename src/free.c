@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 09:58:07 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 11:33:42 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/23 16:43:17 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	myfree(void *ptr)
 
 	if (!ptr)
 		return ;
-	block = (t_block*)ptr - 1;
+	block = ((t_block*)ptr) - 1;
 	if ((zone = is_in_zone(T_HEAD, block)))
 	{
 		block->free = 1;

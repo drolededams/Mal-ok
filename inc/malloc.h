@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 11:56:46 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 12:04:53 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/23 16:19:47 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include <stdint.h>
 # include <unistd.h>
 # include <errno.h>
+# include <pthread.h>
 # include <sys/time.h>
 # include <sys/resource.h>
 # include <sys/mman.h>
@@ -57,6 +58,7 @@ typedef struct		s_alloc
 }					t_alloc;
 
 extern t_alloc g_alloc;
+extern pthread_mutex_t g_mutex;
 extern FILE *file;
 
 int					init_alloc(void);
@@ -104,8 +106,8 @@ void				*min_add(void *tiny, void *small, void *large);
 unsigned long long	ull_max(unsigned long long t, unsigned long long s,
 		unsigned long long l);
 void				show_alloc_mem_hex(void);
-unsigned long long	ts_print_hex(t_zone *zone, int *cur,
-		unsigned long long line, unsigned char *s_pre, unsigned char *s_cur);
+unsigned long long	ts_print_hex(t_zone **zone, int *cur,
+		unsigned long long line, unsigned char **str);
 unsigned long long	l_print_hex(t_block *block, int *cur,
 		unsigned long long line, unsigned char *s_pre, unsigned char *s_cur);
 void				print_line_hex(unsigned long long line);
@@ -120,4 +122,13 @@ void				*myreallocarray(void *ptr, size_t n, size_t size);
 void				print_total(unsigned long long total);
 unsigned long long	print_zone(t_zone *tiny, t_zone *small,
 		t_block *large, void *min);
+unsigned char		**init_str_hex(void);
+void				print_hex_zone(t_zone *tiny, t_zone *small,
+		t_block *large, unsigned char **str);
+unsigned long long	print_block_hex(t_block *block, int *cur,
+		unsigned long long line, unsigned char **str);
+void				print_all_hex(unsigned char **str, int *cur,
+		unsigned long long line);
+void				end_line(unsigned char **str, int *cur,
+		unsigned long long line);
 #endif

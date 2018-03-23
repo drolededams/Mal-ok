@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:11:47 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 11:39:38 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/23 16:30:56 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	*myrealloc(void *ptr, size_t size)
 		myfree(ptr);
 		return (NULL);
 	}
-	block = (t_block*)ptr - 1; //verif t_bloc size != t_zone size
+	block = ((t_block*)ptr) - 1;
 	if ((zone = is_in_zone(T_HEAD, block)))
 		return (t_realloc(ptr, size, zone, block));
 	else if ((zone = is_in_zone(S_HEAD, block)))
@@ -70,6 +70,6 @@ void	*move_and_free(void *ptr, size_t old_size, size_t new_size)
 
 	new_ptr = mymalloc(new_size);
 	new_ptr = ft_realloc_cpy(new_ptr, ptr, new_size, old_size);
-	free(ptr);
+	myfree(ptr);
 	return (new_ptr);
 }
