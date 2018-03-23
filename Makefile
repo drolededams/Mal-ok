@@ -6,31 +6,40 @@
 #    By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/05/12 15:32:27 by dgameiro          #+#    #+#              #
-#    Updated: 2018/03/23 14:48:48 by dgameiro         ###   ########.fr        #
+#    Updated: 2018/03/23 18:51:59 by dgameiro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRC = src/main.c src/free.c src/init.c src/malloc.c src/zone.c src/realloc.c \
-src/print.c src/print_hex.c src/alloc.c src/lib_free.c src/lib_real.c \
-src/lib_print.c src/lib_print_b.c src/lib_print_hex.c src/lib_print_hex_b.c
+CC = gcc
+CFLAGS = -Ilibft -Iinc -Wall -Wextra -Werror
+SRC = main.c free.c init.c malloc.c zone.c realloc.c \
+print.c print_hex.c alloc.c lib_free.c lib_real.c \
+lib_print.c lib_print_b.c lib_print_hex.c lib_print_hex_b.c
 
-INC = -I./inc
+OBJDIR = objs
+VPATH = srcs
 
-NAME = Malloc
+OBJ = $(patsubst %,$(OBJDIR)/%,$(SRC:.c=.o))
 
-FLAGS = -Wall -Werror -Wextra
-
-
-$(NAME):
-	@make -C ./libft
-	@gcc $(FLAGS) $(SRC) $(INC) -L libft/ -lft -o $(NAME)
+NAME = malloc
 
 all: $(NAME)
 
+$(NAME): $(OBJ)
+	@make -C libft
+	@$(CC) -Llibft/ -lft -o $@ $^
+
+
+$(OBJDIR)/%.o: %.c
+	@mkdir -p $(OBJDIR)
+	@$(CC) -c -o $@ $< $(CFLAGS)
+
 clean :
-	@make -C libft/ fclean
+	@make clean -C libft
+	@rm -rf $(OBJDIR)
 
 fclean : clean
-	@/bin/rm -f $(NAME)
+	@make fclean -C libft
+	@rm -rf $(NAME)
 
 re : fclean all
