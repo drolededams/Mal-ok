@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/15 19:44:52 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 16:56:47 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/03/27 12:43:28 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	*mmap_call(size_t size)
 	void *ptr;
 
 	if ((ptr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1,
-					0)) == ((void *)-1))
+					0)) == MAP_FAILED) //verif failed case value
 		return (NULL);
 	return (ptr);
 }
