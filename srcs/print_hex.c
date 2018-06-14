@@ -6,11 +6,11 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/22 14:30:30 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 18:51:48 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/12 14:14:57 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "../inc/malloc.h"
 
 void				show_alloc_mem_hex(void)
 {
@@ -24,9 +24,9 @@ void				show_alloc_mem_hex(void)
 	large = L_HEAD;
 	str = init_str_hex();
 	print_hex_zone(tiny, small, large, str);
-	myfree(str[0]);
-	myfree(str[1]);
-	myfree(str);
+	free(str[0]);
+	free(str[1]);
+	free(str);
 }
 
 void				print_hex_zone(t_zone *tiny, t_zone *small, t_block *large,
@@ -37,7 +37,7 @@ void				print_hex_zone(t_zone *tiny, t_zone *small, t_block *large,
 	int					*cur;
 
 	line = 0;
-	if (!(cur = (int*)mymalloc(sizeof(int) * 2)))
+	if (!(cur = (int*)malloc(sizeof(int) * 2)))
 		ft_putendl("malloc error");
 	cur[0] = 0;
 	cur[1] = 0;
@@ -55,7 +55,7 @@ void				print_hex_zone(t_zone *tiny, t_zone *small, t_block *large,
 		}
 		min = min_add(tiny, small, large);
 	}
-	myfree(cur);
+	free(cur);
 }
 
 unsigned long long	ts_print_hex(t_zone **zone, int *cur,

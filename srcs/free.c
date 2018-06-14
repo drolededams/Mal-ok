@@ -6,19 +6,20 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 09:58:07 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 16:43:17 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/14 11:14:23 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "../inc/malloc.h"
 
-void	myfree(void *ptr)
+void	free(void *ptr)
 {
 	t_block *block;
 	t_zone	*zone;
 
 	if (!ptr)
 		return ;
+	pthread_mutex_lock(&g_mutex);
 	block = ((t_block*)ptr) - 1;
 	if ((zone = is_in_zone(T_HEAD, block)))
 	{
@@ -36,6 +37,7 @@ void	myfree(void *ptr)
 	}
 	else if (search_block(L_HEAD, block))
 		munmap_block(block);
+	pthread_mutex_unlock(&g_mutex);
 }
 
 void	free_defrag(t_zone *zone, t_block *block)
@@ -74,7 +76,8 @@ void	munmap_zone(t_zone *zone)
 
 	prev = zone->prev;
 	next = zone->next;
-	prev->next = next;
+	if (prev)
+		prev->next = next;
 	if (next)
 		next->prev = prev;
 	munmap(zone, zone->head->size + sizeof(t_zone) + sizeof(t_block));
@@ -87,7 +90,8 @@ void	munmap_block(t_block *block)
 
 	prev = block->prev;
 	next = block->next;
-	prev->next = next;
+	if (prev)
+		prev->next = next;
 	if (next)
 		next->prev = prev;
 	munmap(block, block->size + sizeof(t_block));

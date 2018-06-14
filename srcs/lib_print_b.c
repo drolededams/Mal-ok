@@ -6,11 +6,11 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 11:53:42 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 11:54:30 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/14 14:21:52 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "../inc/malloc.h"
 
 void				ft_putsize_t(size_t n)
 {
@@ -41,5 +41,5 @@ void				print_add(void *add)
 	num = add_to_str((unsigned long long)add, "0123456789ABCDEF");
 	ft_putstr("0x");
 	ft_putstr(num);
-	myfree(num);
+	free(num);
 }

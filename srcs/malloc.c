@@ -6,15 +6,16 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/15 19:44:52 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/27 12:43:28 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/14 12:38:32 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "../inc/malloc.h"
 
+t_alloc g_alloc = {NULL, NULL, NULL};
 pthread_mutex_t g_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void	*mymalloc(size_t size)
+void	*malloc(size_t size)
 {
 	void *ptr;
 
@@ -23,7 +24,10 @@ void	*mymalloc(size_t size)
 	pthread_mutex_lock(&g_mutex);
 	if (!g_alloc.tiny)
 		if (!init_alloc())
+		{
+			pthread_mutex_unlock(&g_mutex);
 			return (NULL);
+		}
 	if (size <= T_MSIZE)
 		ptr = ts_malloc(T_HEAD, TINY, size);
 	else if (size <= S_MSIZE)
@@ -54,7 +58,7 @@ void	*mmap_call(size_t size)
 	void *ptr;
 
 	if ((ptr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1,
-					0)) == MAP_FAILED) //verif failed case value
+					0)) == MAP_FAILED)
 		return (NULL);
 	return (ptr);
 }

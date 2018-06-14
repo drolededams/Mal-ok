@@ -6,11 +6,11 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 11:32:54 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 11:33:39 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/12 13:07:15 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "../inc/malloc.h"
 
 t_zone	*is_in_zone(t_zone *zone, t_block *wanted)
 {

@@ -6,11 +6,11 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 11:40:13 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 11:54:03 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/14 14:21:51 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "../inc/malloc.h"
 
 int					add_len(unsigned long long add)
 {
@@ -55,7 +55,7 @@ char				*add_to_str(unsigned long long add, char *hex)
 	int		r;
 
 	i = add_len(add);
-	if (!(str = (char*)mymalloc(sizeof(char) * (i + 1))))
+	if (!(str = (char*)malloc(sizeof(char) * (i + 1))))
 		ft_putendl("Probleme allocation");
 	str[i] = '\0';
 	while (add)

@@ -6,11 +6,11 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/22 10:14:19 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 12:31:28 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/12 19:10:21 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "../inc/malloc.h"
 
 void				show_alloc_mem(void)
 {

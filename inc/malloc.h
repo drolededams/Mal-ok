@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 11:56:46 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 16:19:47 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/12 19:24:55 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,11 @@ typedef struct		s_alloc
 
 extern t_alloc g_alloc;
 extern pthread_mutex_t g_mutex;
-extern FILE *file;
 
 int					init_alloc(void);
 size_t				set_zone_size(unsigned int type);
 void				*set_zone(unsigned int type);
-void				*mymalloc(size_t size);
+void				*malloc(size_t size);
 void				*ts_malloc(t_zone *zone, unsigned int type, size_t size);
 void				*l_malloc(t_block *block, size_t size);
 void				*mmap_call(size_t	size);
@@ -74,13 +73,13 @@ void				*create_lblock(t_block *block, size_t size);
 void				*split_block(t_zone *zone, t_block *block,
 		unsigned int type, size_t size);
 void				*expand_zone(t_zone *zone, unsigned int type, size_t size);
-void				myfree(void *ptr);
+void				free(void *ptr);
 void				free_defrag(t_zone *zone, t_block *block);
 void				munmap_zone(t_zone *zone);
 void				munmap_block(t_block *block);
 t_zone				*is_in_zone(t_zone	*zone, t_block *wanted);
 int					search_block(t_block *head, t_block *wanted);
-void				*myrealloc(void *ptr, size_t size);
+void				*realloc(void *ptr, size_t size);
 void				*t_realloc(void *ptr, size_t size,
 		t_zone *zone, t_block *block);
 void				*s_realloc(void *ptr, size_t size,
@@ -116,9 +115,9 @@ char				*char_to_str(unsigned long long c, char *hex);
 char				*line_to_str(unsigned long long line, char *hex);
 int					same_str(unsigned char *pre, unsigned char *cur);
 void				str_cpy(unsigned char *pre, unsigned char *cur);
-void				*mycalloc(size_t nmemb, size_t size);
-void				*myreallocf(void *ptr, size_t size);
-void				*myreallocarray(void *ptr, size_t n, size_t size);
+void				*calloc(size_t nmemb, size_t size);
+void				*reallocf(void *ptr, size_t size);
+void				*reallocarray(void *ptr, size_t n, size_t size);
 void				print_total(unsigned long long total);
 unsigned long long	print_zone(t_zone *tiny, t_zone *small,
 		t_block *large, void *min);

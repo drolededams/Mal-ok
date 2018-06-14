@@ -6,11 +6,11 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 14:44:21 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 14:46:03 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/12 17:41:48 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "../inc/malloc.h"
 
 char				*line_to_str(unsigned long long line, char *hex)
 {
@@ -21,8 +21,8 @@ char				*line_to_str(unsigned long long line, char *hex)
 
 	i = add_len(line);
 	j = 0;
-	if (!(str = (char*)mymalloc(sizeof(char) * 17)))
-		fprintf(file, "Probleme allocation\n");
+	if (!(str = (char*)malloc(sizeof(char) * 17)))
+		ft_putstr("Probleme allocation\n");
 	str[16] = '\0';
 	while (j < 16 - i)
 	{
@@ -48,7 +48,7 @@ char				*char_to_str(unsigned long long c, char *hex)
 
 	i = add_len(c);
 	j = 0;
-	if (!(str = (char*)mymalloc(sizeof(char) * (3))))
+	if (!(str = (char*)malloc(sizeof(char) * (3))))
 		ft_putendl("Probleme allocation");
 	str[2] = '\0';
 	while (j < 2 - i)
@@ -74,6 +74,7 @@ unsigned long long	print_block_hex(t_block *block, int *cur,
 
 	ptr = (void*)(block + 1);
 	i = 0;
+	line = (unsigned long long)ptr;
 	while (i < block->size)
 	{
 		str[1][cur[0]] = ((unsigned char*)ptr)[i];
@@ -95,7 +96,7 @@ void				print_line_hex(unsigned long long line)
 	num = line_to_str(line, "0123456789abcdef");
 	ft_putstr(num);
 	ft_putchar(' ');
-	myfree(num);
+	free(num);
 }
 
 void				print_char_hex(unsigned long long c)
@@ -104,5 +105,5 @@ void				print_char_hex(unsigned long long c)
 
 	num = char_to_str(c, "0123456789abcdef");
 	ft_putstr(num);
-	myfree(num);
+	free(num);
 }

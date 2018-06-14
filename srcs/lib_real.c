@@ -6,11 +6,11 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 11:34:51 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 11:38:29 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/12 13:09:15 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "../inc/malloc.h"
 
 int		enough_space(t_block *block, size_t size)
 {

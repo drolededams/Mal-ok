@@ -6,23 +6,23 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 14:47:18 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 14:48:24 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/12 15:04:30 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "../inc/malloc.h"
 
 unsigned char		**init_str_hex(void)
 {
 	unsigned char	**str;
 	int				i;
 
-	if (!(str = (unsigned char**)mymalloc(sizeof(unsigned char*) * 2)))
+	if (!(str = (unsigned char**)malloc(sizeof(unsigned char*) * 2)))
 		ft_putendl("malloc error");
 	i = 0;
 	while (i < 2)
 	{
-		if (!(str[i] = (unsigned char*)mycalloc(17, sizeof(unsigned char))))
+		if (!(str[i] = (unsigned char*)calloc(17, sizeof(unsigned char))))
 			ft_putendl("calloc error");
 		i++;
 	}

@@ -6,11 +6,11 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 11:29:25 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/03/23 16:13:43 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/12 13:10:11 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "../inc/malloc.h"
 
 void	*search_free_block(t_zone *zone, unsigned int type, size_t size)
 {
