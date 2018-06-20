@@ -93,10 +93,12 @@ int main()
 	ft_putendl("");
 	ft_putendl("================Reallocarray====================");
 	ft_putendl("");
+	ft_putendl(strerror(errno));
 	adr6 = reallocarray(adr5, 4294967296, 4294967297);
 	ft_putendl(strerror(errno));
 	show_alloc_mem();
 	//show_alloc_mem_ex();
+	ft_putendl("free all");
 	free(adr0);
 	free(adr1);
 	free(adr4);
@@ -158,6 +160,5 @@ int main()
 	ft_putendl("==result==");
 	ft_putendl("");
 	show_alloc_mem();
-	//show_alloc_mem_ex();
 	return (0); 
 } 
