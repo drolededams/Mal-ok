@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/23 11:56:46 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/06/12 19:24:55 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/20 11:19:22 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,4 +130,12 @@ void				print_all_hex(unsigned char **str, int *cur,
 		unsigned long long line);
 void				end_line(unsigned char **str, int *cur,
 		unsigned long long line);
+void				show_alloc_mem_ex(void);
+unsigned long long	print_zone_ex(t_zone *tiny, t_zone *small, t_block *large,
+		void *min);
+size_t				ts_print_ex(t_zone *zone, int type);
+size_t				l_print_ex(t_block *block);
+size_t				print_block_ex(t_block *block);
+void				print_content_ex(t_block *block);
+void				print_char_ex(unsigned long long c, char *hex);
 #endif

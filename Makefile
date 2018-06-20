@@ -6,7 +6,7 @@
 #    By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/05/12 15:32:27 by dgameiro          #+#    #+#              #
-#    Updated: 2018/06/14 11:19:05 by dgameiro         ###   ########.fr        #
+#    Updated: 2018/06/20 13:34:36 by dgameiro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,8 @@ endif
 SRC_PATH = srcs
 SRC_NAME = free.c init.c malloc.c zone.c realloc.c \
 print.c print_hex.c alloc.c lib_free.c lib_real.c \
-lib_print.c lib_print_b.c lib_print_hex.c lib_print_hex_b.c
+lib_print.c lib_print_b.c lib_print_hex.c lib_print_hex_b.c print_ex.c \
+lib_print_ex.c
 
 OBJ_PATH = objs
 

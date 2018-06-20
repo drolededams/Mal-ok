@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print.c                                            :+:      :+:    :+:   */
+/*   print_ex.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/22 10:14:19 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/06/20 13:26:57 by dgameiro         ###   ########.fr       */
+/*   Created: 2018/06/20 10:44:28 by dgameiro          #+#    #+#             */
+/*   Updated: 2018/06/20 13:34:03 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/malloc.h"
 
-void				show_alloc_mem(void)
+void				show_alloc_mem_ex(void)
 {
 	t_zone				*tiny;
 	t_zone				*small;
@@ -24,11 +24,11 @@ void				show_alloc_mem(void)
 	small = S_HEAD;
 	large = L_HEAD;
 	min = min_add(tiny, small, large);
-	total = print_zone(tiny, small, large, min);
+	total = print_zone_ex(tiny, small, large, min);
 	print_total(total);
 }
 
-unsigned long long	print_zone(t_zone *tiny, t_zone *small, t_block *large,
+unsigned long long	print_zone_ex(t_zone *tiny, t_zone *small, t_block *large,
 		void *min)
 {
 	unsigned long long total;
@@ -38,17 +38,17 @@ unsigned long long	print_zone(t_zone *tiny, t_zone *small, t_block *large,
 	{
 		if (min == tiny)
 		{
-			total += ts_print(tiny, TINY);
+			total += ts_print_ex(tiny, TINY);
 			tiny = tiny->next;
 		}
 		else if (min == small)
 		{
-			total += ts_print(small, SMALL);
+			total += ts_print_ex(small, SMALL);
 			small = small->next;
 		}
 		else if (min == large)
 		{
-			total += l_print(large);
+			total += l_print_ex(large);
 			large = large->next;
 		}
 		min = min_add(tiny, small, large);
@@ -56,7 +56,7 @@ unsigned long long	print_zone(t_zone *tiny, t_zone *small, t_block *large,
 	return (total);
 }
 
-size_t				ts_print(t_zone *zone, int type)
+size_t				ts_print_ex(t_zone *zone, int type)
 {
 	t_block	*block;
 	size_t	block_size;
@@ -72,21 +72,21 @@ size_t				ts_print(t_zone *zone, int type)
 	while (block)
 	{
 		if (block->free == 0)
-			block_size += print_block(block);
+			block_size += print_block_ex(block);
 		block = block->next;
 	}
 	return (block_size);
 }
 
-size_t				l_print(t_block *block)
+size_t				l_print_ex(t_block *block)
 {
 	ft_putstr("LARGE : ");
 	print_add((void*)block);
 	ft_putchar('\n');
-	return (print_block(block));
+	return (print_block_ex(block));
 }
 
-size_t				print_block(t_block *block)
+size_t				print_block_ex(t_block *block)
 {
 	print_add((void*)(block + 1));
 	ft_putstr(" - ");
@@ -97,5 +97,6 @@ size_t				print_block(t_block *block)
 		ft_putendl(" octets");
 	else
 		ft_putendl(" octet");
+	print_content_ex(block);
 	return (block->size);
 }
