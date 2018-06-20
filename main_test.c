@@ -37,7 +37,6 @@ int main()
 	char *adr5; 
 	char *adr6; 
 
-
 	ft_putendl("================Calloc====================");
 	ft_putendl("");
 
@@ -49,8 +48,8 @@ int main()
 	adr1 = (char*)malloc(16); 
 	adr1[0] = 44; 
 	adr1[1] = 45; 
-	//show_alloc_mem_hex();
 	show_alloc_mem_ex();
+	show_alloc_mem_hex();
 	//show_alloc_mem();
 
 	ft_putendl("==result==");
@@ -88,8 +87,6 @@ int main()
 	show_alloc_mem();
 	
 	
-	
-	
 	ft_putendl("");
 	ft_putendl("================Reallocarray====================");
 	ft_putendl("");
@@ -98,6 +95,7 @@ int main()
 	ft_putendl(strerror(errno));
 	show_alloc_mem();
 	//show_alloc_mem_ex();
+	//show_alloc_mem_hex();
 	ft_putendl("free all");
 	free(adr0);
 	free(adr1);
@@ -117,7 +115,7 @@ int main()
 	ft_putendl("=Malloc=");
 	ft_putendl("");
 	pthread_t mal[3];
-	pthread_t free[4];
+	pthread_t fre[4];
 	pthread_t real[2];
 	pthread_create(&mal[0], NULL, malloc_array, adr0);
 	pthread_create(&mal[1], NULL, malloc_array, adr1);
@@ -131,14 +129,14 @@ int main()
 	ft_putendl("");
 	ft_putendl("=Free=");
 	ft_putendl("");
-	pthread_create(&free[0], NULL, free_array, adr0);
-	pthread_create(&free[1], NULL, free_array, adr0);
-	pthread_create(&free[2], NULL, free_array, adr1);
-	pthread_create(&free[3], NULL, free_array, adr5);
-	pthread_join(free[0], NULL);
-	pthread_join(free[1], NULL);
-	pthread_join(free[2], NULL);
-	pthread_join(free[3], NULL);
+	pthread_create(&fre[0], NULL, free_array, adr0);
+	pthread_create(&fre[1], NULL, free_array, adr0);
+	pthread_create(&fre[2], NULL, free_array, adr1);
+	pthread_create(&fre[3], NULL, free_array, adr5);
+	pthread_join(fre[0], NULL);
+	pthread_join(fre[1], NULL);
+	pthread_join(fre[2], NULL);
+	pthread_join(fre[3], NULL);
 	show_alloc_mem();
 	//show_alloc_mem_ex();
 	
@@ -160,5 +158,6 @@ int main()
 	ft_putendl("==result==");
 	ft_putendl("");
 	show_alloc_mem();
-	return (0); 
+
+	return (0);
 } 
