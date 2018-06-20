@@ -49,13 +49,17 @@ int main()
 	adr1 = (char*)malloc(16); 
 	adr1[0] = 44; 
 	adr1[1] = 45; 
-	show_alloc_mem_hex();
+	//show_alloc_mem_hex();
+	show_alloc_mem_ex();
+	//show_alloc_mem();
 
 	ft_putendl("==result==");
 	ft_putendl("");
 	free(adr1);
 	adr1 = calloc(2, 8); 
-	show_alloc_mem_hex();
+	//show_alloc_mem_hex();
+	show_alloc_mem_ex();
+	//show_alloc_mem();
 
 
 	ft_putendl("");
@@ -71,6 +75,7 @@ int main()
 	adr4 = (char*)calloc(2, 8);
 	adr4[0] = 46; 
 	show_alloc_mem();
+	//show_alloc_mem_ex();
 	free(adr2);
 	free(adr3);
 
@@ -91,6 +96,7 @@ int main()
 	adr6 = reallocarray(adr5, 4294967296, 4294967297);
 	ft_putendl(strerror(errno));
 	show_alloc_mem();
+	//show_alloc_mem_ex();
 	free(adr0);
 	free(adr1);
 	free(adr4);
@@ -100,6 +106,7 @@ int main()
 	show_alloc_mem();
 	show_alloc_mem_hex();
 	show_alloc_mem();
+	//show_alloc_mem_ex();
 	
 	ft_putendl("");
 	ft_putendl("================THREAD====================");
@@ -117,6 +124,7 @@ int main()
 	pthread_join(mal[1], NULL);
 	pthread_join(mal[2], NULL);
 	show_alloc_mem();
+	//show_alloc_mem_ex();
 	
 	ft_putendl("");
 	ft_putendl("=Free=");
@@ -128,7 +136,9 @@ int main()
 	pthread_join(free[0], NULL);
 	pthread_join(free[1], NULL);
 	pthread_join(free[2], NULL);
+	pthread_join(free[3], NULL);
 	show_alloc_mem();
+	//show_alloc_mem_ex();
 	
 	ft_putendl("");
 	ft_putendl("=Realloc=");
@@ -139,6 +149,7 @@ int main()
 	ft_putendl("==init==");
 	ft_putendl("");
 	show_alloc_mem();
+	//show_alloc_mem_ex();
 	pthread_create(&real[1], NULL, real_array, adr5);
 	pthread_create(&real[0], NULL, real_array, adr0);
 	pthread_join(real[1], NULL);
@@ -147,5 +158,6 @@ int main()
 	ft_putendl("==result==");
 	ft_putendl("");
 	show_alloc_mem();
+	//show_alloc_mem_ex();
 	return (0); 
 } 

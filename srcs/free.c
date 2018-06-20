@@ -6,7 +6,7 @@
 /*   By: dgameiro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 09:58:07 by dgameiro          #+#    #+#             */
-/*   Updated: 2018/06/14 11:14:23 by dgameiro         ###   ########.fr       */
+/*   Updated: 2018/06/20 16:14:33 by dgameiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,5 +94,9 @@ void	munmap_block(t_block *block)
 		prev->next = next;
 	if (next)
 		next->prev = prev;
+	if (L_HEAD == block)
+		L_HEAD = next;
 	munmap(block, block->size + sizeof(t_block));
+	if (!prev && !next)
+		L_HEAD = NULL;
 }
